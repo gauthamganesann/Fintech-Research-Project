@@ -16,7 +16,7 @@ tickers = {
     "S&P_500": "^GSPC",
     "Nasdaq": "^IXIC"
 }
-start_date = "2020-02-19"
+start_date = "2020-01-06"
 end_date = "2022-12-01"
 result = {}
 

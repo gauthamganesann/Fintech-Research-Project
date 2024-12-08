@@ -1,18 +1,17 @@
 # Fintech Research Project
 # Data Cleaning (Crypto)
 
-# Steps,
+# Steps:
 # 1. Import the raw data
 # 2. Rename the columns
-# 3. Convert the Date column into datetime object
-# 4. Set the Date column as the index and convert it into YYYY-MM-DD format
-# 5. Filter the data for the required timeframe
-# 6. Check for missing values
-# 7. Sort the dates in ascending order (earliest to latest)
+# 3. Convert the Date column into a datetime object
+# 4. Set the Date column as the index
+# 5. Sort the dates in ascending order
+# 6. Filter the data for the required timeframe
+# 7. Check for missing values
 # 8. Filter and retain the relevant columns
-#    Date is already the index, Close Price, Volume BTC ; Volume ETH, Volume USD
+#    Retain: Close Price, Volume BTC/ETH, Volume USD
 # 9. Export the clean data
-
 
 
 import pandas as pd
@@ -31,47 +30,45 @@ btc_data.columns = ["Timestamp", "Date", "Symbol", "Open Price", "High Price", "
 eth_data.columns = ["Timestamp", "Date", "Symbol", "Open Price", "High Price", "Low Price", "Close Price", "Volume ETH", "Volume USD"]
 
 
-# Step 3: Converts the Date column into datetime object
-btc_data["Date"] = pd.to_datetime(btc_data["Date"], format="%d/%m/%Y %H:%M")
-eth_data["Date"] = pd.to_datetime(eth_data["Date"], format="%d/%m/%Y %H:%M")
+# Step 3: Converts the Date column into a datetime object
+btc_data["Date"] = pd.to_datetime(btc_data["Date"], format="%d/%m/%Y %H:%M", errors="coerce")
+eth_data["Date"] = pd.to_datetime(eth_data["Date"], format="%d/%m/%Y %H:%M", errors="coerce")
 
 
-# Step 4: Sets the Date column as the index and converts it into YYYY-MM-DD format
+
+# Step 4: Sets the Date column as the index
 btc_data.set_index("Date", inplace=True)
 eth_data.set_index("Date", inplace=True)
 
-btc_data.index = btc_data.index.strftime('%Y-%m-%d')
-eth_data.index = eth_data.index.strftime('%Y-%m-%d')
+
+# Step 5: Sorts the dates in ascending order
+btc_data.sort_index(inplace=True)
+eth_data.sort_index(inplace=True)
 
 
-# Step 5: Filters the data for the required timeframe
-start_date = "2020-02-19"
+# Step 6: Filters the data for the required timeframe
+start_date = "2020-01-06"
 end_date = "2022-12-01"
 
 btc_data = btc_data.loc[start_date:end_date]
 eth_data = eth_data.loc[start_date:end_date]
 
 
-# Step 6: Checks for missing values
+# Step 7: Checks for missing values
 print("Missing values in Bitcoin data:")
-print(btc_data.isnull().sum())                      # btc_data.isnull() checks if the data has missing values
-                                                    # returns a df containing True for missing value and False for a valid value
-                                                    # btc_data.isnull().sum() counts the number of True for each column
+print(btc_data.isnull().sum())  # Check for missing values in Bitcoin data
 print("\nMissing values in Ethereum data:")
-print(eth_data.isnull().sum())
-
-
-# Step 7: Sorts the dates in ascending order (earliest to latest)
-btc_data.sort_index(inplace=True)
-eth_data.sort_index(inplace=True)
+print(eth_data.isnull().sum())  # Check for missing values in Ethereum data
 
 
 # Step 8: Filters and retains the relevant columns
 btc_data = btc_data[["Close Price", "Volume BTC", "Volume USD"]]
 eth_data = eth_data[["Close Price", "Volume ETH", "Volume USD"]]
 
-print(f"{eth_data.head(5)}")
-print(f"\n{eth_data.tail(5)}")
+print("Bitcoin Data (First 5 Rows):")
+print(btc_data.head())
+print("\nEthereum Data (First 5 Rows):")
+print(eth_data.head())
 
 
 # Step 9: Exports the clean data
